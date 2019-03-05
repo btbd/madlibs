@@ -1,0 +1,72 @@
+<html>
+	<head>
+		<style>
+			html, body {
+				margin: 0;
+				padding: 0;
+			}
+		
+			#holder {
+				width: 300px;
+				height: 65px;
+				background-color: lightgray;
+				position: absolute;
+				top:5%;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				margin-left: auto;
+				margin-right: auto;
+				text-align: center;
+			}
+			
+			#holder-holder {
+				position: relative;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			
+			#password {
+				width: 65%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="holder">
+			<div id="holder-holder">
+				<input id="password" type="password"></input>
+				<button id="login">Login</button>
+			</div>
+		</div>
+		<script>
+(function(document) {
+var password = document.getElementById("password");
+document.getElementById("login").onclick = login;
+password.onkeydown = function(e) {
+	if (e.keyCode === 13) login();
+};
+
+function login() {
+	authHttpGet(password.value, "./admin", function(x) {
+		if (x.readyState === 4 && x.status === 200) {
+			document.open();
+			window.password = password.value;
+			document.write(x.responseText);
+			document.close();
+		}
+	});
+}
+
+function authHttpGet(pass, url, state) {
+	var x = new XMLHttpRequest();
+	x.onreadystatechange = function() {
+		state(x);
+	};
+	x.open("GET", url, true);
+	x.setRequestHeader("Authorization", "Basic " + btoa(pass));
+	x.send(null);
+}
+})(document);
+		</script>
+	</body>
+</html>

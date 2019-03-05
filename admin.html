@@ -1,0 +1,204 @@
+<html>
+	<head>
+		<style>
+			body, html {
+				padding: 0;
+				margin: 0;
+				overflow-y: auto;
+				height: 100%;
+			}
+		
+			#sentences {
+				font-family: Arial;
+				position: absolute;
+				height: -webkit-calc(50% - 30px);
+				height: -moz-calc(50% - 30px);
+				height: calc(50% - 30px);
+				top: 30px;
+				left: 0;
+				width: -webkit-calc(100% - 20px);
+				width: -moz-calc(100% - 20px);
+				width: calc(100% - 20px);
+				resize: none;
+				overflow: auto;
+				white-space: nowrap;
+				margin: 0;
+				margin-left: 10px;
+				margin-right: 10px;
+			}
+			
+			#nodes {
+				margin: 0;
+				width: -webkit-calc(100% - 20px);
+				width: -moz-calc(100% - 20px);
+				width: calc(100% - 20px);
+				position: absolute;
+				top: -webkit-calc(50% + 30px);
+				top: -moz-calc(50% + 30px);
+				top: calc(50% + 30px);
+				left: 0;
+				padding: 0;
+				margin-left: 10px;
+				margin-right: 10px;
+				margin-bottom: 10px;
+				overflow-y: auto;
+			}
+			
+			td, th {
+				text-align: left;
+				width: 50%;
+			}
+			
+			td input:not([type="checkbox"]) {
+				width: 100%;
+			}
+			
+			td:first-child, th:first-child {
+				width: 20px;
+			}
+			
+			#binary-holder {
+				position: fixed;
+				top: 5px; 
+				right: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="binary-holder">
+			<label for="binary">
+				Binary <input id="binary" type="checkbox">
+			</label>
+		</div>
+		<div style="position: fixed; left: 10px; top: 2px;">Sentences (new-line separated, all uppercase for word types)</div>
+		<textarea id="sentences" wrap="soft"></textarea>
+		<table><tbody id="nodes">
+			<tr>
+				<th>Show</th>
+				<th>Image</th>
+				<th>Service</th>
+			</tr>
+		</tbody></table>
+		<script>
+(function(document) {
+var sentences = document.getElementById("sentences");
+var binary = document.getElementById("binary");
+sentences.onkeydown = binary.onclick = function() {
+	clearTimeout(window.last_timeout);
+	window.last_timeout = setTimeout(updateSettings, 500);
+};
+var nodes = document.getElementById("nodes");
+
+window.addEventListener("beforeunload", updateSettings);
+
+httpGet("./settings", function(x) {
+	if (x.readyState === 4) {
+		if (x.status === 200 && x.responseText.length > 0) {
+			var settings = JSON.parse(x.responseText);
+			if (settings.sentences) {
+				sentences.value = settings.sentences.join("\n");
+			}
+			
+			if (settings.nodes) {
+				for (var i = 0; i < settings.nodes.length; ++i) {
+					var n = settings.nodes[i];
+					nodes.appendChild(nodeElement(!n.disabled, n.img, n.service));
+				}
+			}
+			
+			binary.checked = settings.binary;
+		}
+		
+		nodes.appendChild(nodeElement(false, "", ""));
+	}
+});
+
+function nodeBlur() {
+	for (var i = 1; i < nodes.children.length - 1; ++i) {
+		if (nodes.children[i].children[1].children[0].value.trim().length === 0 && nodes.children[i].children[2].children[0].value.trim().length === 0) {
+			nodes.removeChild(nodes.children[i--]);
+		}
+	}
+		
+	if (nodes.children[nodes.children.length - 1].children[1].children[0].value.length !== 0) nodes.appendChild(nodeElement(false, "", ""));
+}
+
+function tdChild(e) {
+	var td = document.createElement("TD");
+	td.appendChild(e);
+	return td;
+}
+
+function nodeElement(enabled, imgValue, serviceValue) {
+	var row = document.createElement("TR");
+	
+	var check = document.createElement("INPUT");
+	var img = document.createElement("INPUT");
+	var service = document.createElement("INPUT");
+	
+	check.type = "checkbox";
+	check.checked = enabled;
+	img.value = imgValue;
+	img.onblur = nodeBlur;
+	service.value = serviceValue;
+	service.onblur = nodeBlur;
+	
+	img.onkeydown = service.onkeydown = check.onclick = sentences.onkeydown;
+	
+	row.appendChild(tdChild(check));
+	row.appendChild(tdChild(img));
+	row.appendChild(tdChild(service));
+	
+	if (imgValue.length === 0 && serviceValue.length === 0) {
+		row.onkeydown = function() {
+			nodes.children[nodes.children.length - 1].children[0].children[0].checked = true;
+			nodes.appendChild(nodeElement(false, "", ""));
+			this.onkeydown = undefined;
+		};
+	}
+	
+	return row;
+}
+
+function updateSettings() {
+	var new_sentences = [];
+	var new_nodes = [];
+	
+	for (var s = sentences.value.split("\n"), i = 0; i < s.length; ++i) {
+		var e = s[i].trim();
+		if (e.length > 0) new_sentences.push(e);
+	}
+	
+	for (var i = 1; i < nodes.children.length; ++i) {
+		var n = nodes.children[i].children;
+		if (n[1].children[0].value.length > 0 || n[2].children[0].value.length > 0) {
+			new_nodes.push({
+				disabled: !n[0].children[0].checked,
+				img: n[1].children[0].value,
+				service: n[2].children[0].value
+			});
+		}
+	}
+	
+	var x = new XMLHttpRequest();
+	x.open("POST", "./settings", true);
+	x.setRequestHeader("Authorization", "Basic " + btoa(window.password));
+	x.send(JSON.stringify({
+		sentences: new_sentences,
+		nodes: new_nodes,
+		binary: binary.checked
+	}));
+}
+
+function httpGet(url, state) {
+	var x = new XMLHttpRequest();
+	x.onreadystatechange = function() {
+		state(x);
+	};
+	x.open("GET", url, true);
+	x.send(null);
+}
+})(document);
+		</script>
+	</body>
+</html>

@@ -1,0 +1,190 @@
+<html>
+	<head>
+		<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet">
+		<style>
+			html, body {
+				margin: 0;
+				padding: 0;
+			}
+			
+			.hide {
+				display: none;
+			}
+			
+			#holder {
+				transition: transform 0.25s;
+				-webkit-transition: transform 0.25s;
+				-moz-transition: transform 0.25s;
+				-o-transition: transform 0.25s;
+				position: fixed;
+				text-align: center;
+				top: 8.5%;
+				width: 85%;
+				color: white;
+				left: 50%;
+				font-family: Arial;
+				font-size: 3.5vh;
+			}
+			
+			.holder-hide {
+				opacity: 1;
+				transform: translate(-50%, -50%) scale(0);
+				-webkit-transform: translate(-50%, -50%) scale(0);
+				-moz-transform: translate(-50%, -50%) scale(0);
+				-o-transform: translate(-50%, -50%) scale(0);
+			}
+			
+			.holder-show {
+				transform: translate(-50%, -50%) scale(1);
+				-webkit-transform: translate(-50%, -50%) scale(1);
+				-moz-transform: translate(-50%, -50%) scale(1);
+				-o-transform: translate(-50%, -50%) scale(1);
+				opacity: 1 !important;
+			}
+			
+			.word {
+				display: inline-block;
+			}
+			
+			.blank {
+				display: inline-block;
+				border-bottom: 2px solid white;
+				line-height: 0.9;
+			}
+			
+			.disable-transition {
+				transition: none !important;
+				-webkit-transition: none !important;
+				-moz-transition: none !important;
+				-o-transition: none !important; 
+			}
+			
+			#help {
+				z-index: 1;
+				transition: all 0.25s;
+				-webkit-transition: all 0.25s;
+				-moz-transition: all 0.25s;
+				-o-transition: all 0.25s;
+				font-family: IBM Plex Sans;
+				position: fixed;
+				background-color: white;
+				border-top-left-radius: 10px;
+				border-top-right-radius: 10px;
+				border-bottom-left-radius: 10px;
+				border-bottom-right-radius: 10px;				
+			}
+
+			.help-minimized {
+				top: calc(100% - 20px) !important;
+				left: calc(100% - 50px) !important;
+				width: 50px !important;
+				height: 20px !important;
+				border-bottom-left-radius: 0px !important;
+				border-bottom-right-radius: 0px !important;
+			}
+			
+			#help-head {
+				user-select: none;
+				-webkit-user-select: none;  
+				-moz-user-select: none;
+				-ms-user-select: none;
+				text-align: center;
+				border-top-left-radius: 10px;
+				border-top-right-radius: 10px;
+				top: 0;
+				background-color: rgb(61, 112, 178);
+				height: 20px;
+				width: 100%;
+			}
+			
+			#help-minimize {
+				width: 50px;
+				text-align: center;
+				color: white;
+				font-weight: bold;
+				float: right;
+			}
+			
+			#help-minimize:hover {
+				cursor: pointer;
+			}
+			
+			#help-text {
+				margin: 10px 10px 10px 10px;
+			}
+			
+			#event {
+				border-radius: 5px;
+				z-index: 1;
+				font-family: IBM Plex Sans;
+				position: fixed;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				-o-transform: translate(-50%, -50%);
+				width: 90%;
+				height: 90%;
+				background-color: white;
+			}
+			
+			#request {
+				margin-left: 20px;
+				margin-top: 40px;
+				width: calc(50% - 30px);
+				height: calc(100% - 60px);
+				float: left;
+				overflow: auto;
+			}
+			
+			#response {
+				position: absolute;
+				margin-top: 40px;
+				width: calc(50% - 25px);
+				height: calc(100% - 60px);
+				left: 50%;
+				overflow: auto;
+			}
+			
+			#event-close {
+				font-family: Arial;
+				position: absolute;
+				right: 0px;
+				top: 7.5px;
+				width: 20px;
+				height: 30px;
+			}
+			
+			#event-close:hover {
+				cursor: pointer;
+			}
+			
+			pre {
+				padding-left: 1px;
+				padding-right: 1px;
+				border: 1px gray solid;
+				background-color: rgb(235, 237, 240);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="event" class="hide">
+			<div style="top: 10px; left: 20px; position: absolute; font-weight: bold;">Original Event</div>
+			<pre id="request"></pre>
+			<div style="left: 50%; top: 10px; position: absolute; font-weight: bold;">Related Event</div>
+			<pre id="response"></pre>
+			<div id="event-close">X</div>
+		</div>
+		<div id="help" class="help-minimized">
+			<div id="help-head"><div id="help-minimize">?</div></div>
+			<div id="help-text">
+			  <h1><center>CloudEvents Interop Demo #2</center></h1>
+			  More to come, but for now see
+			  <a href="https://docs.google.com/document/d/1Vkrmz0vLyiJnUmHUeJfmFbBldDyD-DOFcBNOU-eEKeg/edit#" target=_blank>here</a>.
+			</div>
+		</div>
+		<div id="holder" class="holder-hide"></div>
+		<canvas id="canvas"></canvas>
+	<script src="index.js"></script>
+</html>
