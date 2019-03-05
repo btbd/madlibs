@@ -16,6 +16,8 @@ To view a request/response, click on one of the nodes.
     - Directory for "settings.json" (default ".").
 - `--no-https`
     - Disable HTTPS check for admin page.
+- `-p <int>`
+    - The port to listen on (default 80).
 - `--password <string>`
     - Password for admin page (default "password").
 - `-t <int>`
