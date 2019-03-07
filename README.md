@@ -2,8 +2,6 @@
 
 A visual demo for CloudEvents that creates mad libs.
 
-This was used as a interopability demo fajsdlfjasldf
-
 ## Usage
 
 To build the server, do `make`. Then run `madlibs`.
