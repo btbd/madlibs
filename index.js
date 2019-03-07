@@ -464,7 +464,7 @@ function nodeHandler(x, y) {
 	x *= window.devicePixelRatio;
 	y *= window.devicePixelRatio;
 	
-	if (e_help_minimize.innerText !== "—") {
+	if (e_help_minimize.innerText !== "—" && e_event.classList.contains("hide")) {
 		var radius = (Math.min(canvas.width, canvas.height - (canvas.height * 0.2)) / 2) * 0.8,
 			cx     = canvas.width / 2,
 			cy     = (1.1 * canvas.height) / 2;
