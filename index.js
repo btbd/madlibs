@@ -1,7 +1,7 @@
 (function(document) {
 var canvas      = document.getElementById("canvas"),
 	ctx         = canvas.getContext("2d", { alpha: false }),
-	base        = new Node("", "https://raw.githubusercontent.com/cncf/artwork/master/cloudevents/icon/color/cloudevents-icon-color-reversed.png"),
+	base        = new Node("", "https://raw.githubusercontent.com/cncf/artwork/master/projects/cloudevents/icon/color/cloudevents-icon-color-reversed.png"),
 	nodes       = [],
 	words       = [],
 	blank_words = 0,
